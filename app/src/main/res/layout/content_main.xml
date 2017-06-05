@@ -65,7 +65,7 @@
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
                 android:onClick="getBrowsingData"
-                android:text="Browsing"
+                android:text="Calender"
                 android:textColor="@android:color/white" />
 
         </TableRow>
@@ -109,7 +109,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
-                android:text="Button"
+                android:text="Phone Details"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -119,7 +119,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
-                android:text="Button"
+                android:text="Location"
                 android:textColor="@android:color/white" />
 
         </TableRow>
