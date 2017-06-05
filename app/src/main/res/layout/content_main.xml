@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.axis_inside.tf_exp_app.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btPower"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getSystemPowerDetails"
+                android:text="Power"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btSms"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getSmsDetails"
+                android:text="SMS"
+                android:textColor="@android:color/white" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btCallLogs"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getCallLogs"
+                android:text="Call Logs"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btBrowsing"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getBrowsingData"
+                android:text="Browsing"
+                android:textColor="@android:color/white" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btOtherApps"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getOtherInstalledApps"
+                android:text="Other Apps"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btContacts"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:onClick="getContactsDetails"
+                android:text="Contacts"
+                android:textColor="@android:color/white" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:text="Button"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/button11"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_margin="5dp"
+                android:layout_weight="50"
+                android:background="@color/colorAccent"
+                android:text="Button"
+                android:textColor="@android:color/white" />
+
+        </TableRow>
+
+    </TableLayout>
+</LinearLayout>
