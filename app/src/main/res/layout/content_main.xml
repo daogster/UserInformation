@@ -58,13 +58,13 @@
                 android:textColor="@android:color/white" />
 
             <Button
-                android:id="@+id/btBrowsing"
+                android:id="@+id/btCalender"
                 android:layout_width="wrap_content"
                 android:layout_height="116dp"
                 android:layout_margin="5dp"
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
-                android:onClick="getBrowsingData"
+                android:onClick="getCalenderDetails"
                 android:text="Calender"
                 android:textColor="@android:color/white" />
 
@@ -109,6 +109,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
+                android:onClick="getPhoneDetails"
                 android:text="Phone Details"
                 android:textColor="@android:color/white" />
 
@@ -119,6 +120,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="50"
                 android:background="@color/colorAccent"
+                android:onClick="getPhoneLocation"
                 android:text="Location"
                 android:textColor="@android:color/white" />
 

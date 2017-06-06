@@ -21,7 +21,9 @@ import android.util.Log;
 import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -106,8 +108,8 @@ public class DetailsActivity extends AppCompatActivity {
                 recordsStored = fetchContactList();
             }else if(detailsType.equals("APPS")){
                 recordsStored = getInstalledAppsList();
-            }else if(detailsType.equals("BROWSER")){
-                recordsStored = getBrowsingData();
+            }else if(detailsType.equals("CALENDER")){
+                recordsStored = getCalenderEvents();
             }
             listInboxMessages = recordsStored;
             customHandler.sendEmptyMessage(0);
@@ -183,6 +185,33 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         return appList;
+    }
+
+    public ArrayList<CommonDetails> getCalenderEvents(){
+        ArrayList<CommonDetails> eventList = new ArrayList<>();
+        Cursor cursor = this.getContentResolver()
+                .query(
+                        Uri.parse("content://com.android.calendar/events"),
+                        new String[]{"calendar_id", "title", "description",
+                                "dtstart", "dtend", "eventLocation"}, null,
+                        null, null);
+
+        if(cursor!=null){
+            while (cursor.moveToNext()){
+                CommonDetails calender = new CommonDetails();
+                calender.title= cursor.getString(1);
+                calender.details = cursor.getString(2);
+                eventList.add(calender);
+            }
+        }
+        return eventList;
+    }
+    public String getDate(long milliSeconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat(
+                "dd/MM/yyyy hh:mm:ss a");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
     public ArrayList<CommonDetails> getBrowsingData(){
