@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity
                 String result = "Latitude:" + lat +
                         " Longitude" + lon +
                         " " + resultData.getString(Constants.RESULT_DATA_KEY);
-
+                DynamoDBManager.insertUsers(getApplicationContext(),result);
                 displayDialog("Device Location", result);
             }
 
