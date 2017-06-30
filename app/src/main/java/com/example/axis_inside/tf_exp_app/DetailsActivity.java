@@ -1,22 +1,10 @@
 package com.example.axis_inside.tf_exp_app;
 
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Browser;
-import android.provider.CallLog;
-import android.provider.ContactsContract;
-import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -24,7 +12,6 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -38,6 +25,7 @@ public class DetailsActivity extends AppCompatActivity {
     private FetchMessageThread fetchMessageThread;
     private int currentCount = 0;
     private String detailsType;
+    private MobileDataFetcher mobileDataFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +37,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+        mobileDataFetcher = MobileDataFetcher.getMobileDataFetcher(this);
         initViews();
     }
 
@@ -101,22 +90,22 @@ public class DetailsActivity extends AppCompatActivity {
             //recordsStored = fetchInboxSms(TYPE_INCOMING_MESSAGE);
             //recordsStored = fetchCallLogs(TYPE_INCOMING_MESSAGE);
             if(detailsType.equals("SMS")){
-                recordsStored = fetchInboxSms(TYPE_INCOMING_MESSAGE);
+                recordsStored = mobileDataFetcher.fetchInboxSms(TYPE_INCOMING_MESSAGE);
             }else if(detailsType.equals("CALLS")){
-                recordsStored = fetchCallLogs();
+                recordsStored = mobileDataFetcher.fetchCallLogs();
             }else if(detailsType.equals("CONTACT")){
-                recordsStored = fetchContactList();
+                recordsStored = mobileDataFetcher.fetchContactList();
             }else if(detailsType.equals("APPS")){
-                recordsStored = getInstalledAppsList();
+                recordsStored = mobileDataFetcher.getInstalledAppsList();
             }else if(detailsType.equals("CALENDER")){
-                recordsStored = getCalenderEvents();
+                recordsStored = mobileDataFetcher.getCalenderEvents();
             }
             listInboxMessages = recordsStored;
             customHandler.sendEmptyMessage(0);
         }
     }
 
-    public ArrayList<CommonDetails> fetchInboxSms(int type) {
+/*    public ArrayList<CommonDetails> fetchInboxSms(int type) {
             ArrayList<CommonDetails> smsInbox = new ArrayList<CommonDetails>();
             Uri uriSms = Uri.parse("content://sms");
             Cursor cursor = this.getContentResolver()
@@ -137,8 +126,9 @@ public class DetailsActivity extends AppCompatActivity {
                     } while (cursor.moveToPrevious());
                 }
             }  return smsInbox;
-    }
+    }*/
 
+/*
     public ArrayList<CommonDetails> fetchCallLogs(){
         ArrayList<CommonDetails> callLogs = new ArrayList<>();
         Uri uriCalls = Uri.parse("content://call_log/calls");
@@ -157,8 +147,9 @@ public class DetailsActivity extends AppCompatActivity {
         }
         return callLogs;
     }
+*/
 
-    public ArrayList<CommonDetails> fetchContactList(){
+/*    public ArrayList<CommonDetails> fetchContactList(){
         ArrayList<CommonDetails> contactList = new ArrayList<>();
         Cursor phones = this.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
         while (phones.moveToNext()){
@@ -169,9 +160,9 @@ public class DetailsActivity extends AppCompatActivity {
             contactList.add(contact);
         }
         return contactList;
-    }
+    }*/
 
-    public ArrayList<CommonDetails> getInstalledAppsList(){
+/*    public ArrayList<CommonDetails> getInstalledAppsList(){
         ArrayList<CommonDetails> appList = new ArrayList<>();
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -185,9 +176,9 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         return appList;
-    }
+    }*/
 
-    public ArrayList<CommonDetails> getCalenderEvents(){
+/*    public ArrayList<CommonDetails> getCalenderEvents(){
         ArrayList<CommonDetails> eventList = new ArrayList<>();
         Cursor cursor = this.getContentResolver()
                 .query(
@@ -205,7 +196,8 @@ public class DetailsActivity extends AppCompatActivity {
             }
         }
         return eventList;
-    }
+    }*/
+
     public String getDate(long milliSeconds) {
         SimpleDateFormat formatter = new SimpleDateFormat(
                 "dd/MM/yyyy hh:mm:ss a");
@@ -214,7 +206,7 @@ public class DetailsActivity extends AppCompatActivity {
         return formatter.format(calendar.getTime());
     }
 
-    public ArrayList<CommonDetails> getBrowsingData(){
+/*    public ArrayList<CommonDetails> getBrowsingData(){
         ArrayList<CommonDetails> browsingDetails = new ArrayList<>();
         Uri uriCustom = Uri.parse("content://com.android.chrome/history");
         //BrowserProvider browserProvider = new BrowserProvider(context);
@@ -226,7 +218,7 @@ public class DetailsActivity extends AppCompatActivity {
             }
         }
         return browsingDetails;
-    }
+    }*/
 
     public synchronized void startThread() {
             if (fetchMessageThread == null) {
@@ -252,13 +244,13 @@ public class DetailsActivity extends AppCompatActivity {
 
             @Override
             public void handleMessage(android.os.Message msg) {
-                DetailsActivity inboxListActivity = activityHolder.get();
-                if (inboxListActivity.fetchMessageThread != null
-                        && inboxListActivity.currentCount == inboxListActivity.fetchMessageThread.tag) {
+                DetailsActivity detailsActivity = activityHolder.get();
+                if (detailsActivity.fetchMessageThread != null
+                        && detailsActivity.currentCount == detailsActivity.fetchMessageThread.tag) {
                     Log.i("received result", "received result");
-                    inboxListActivity.fetchMessageThread = null;
-                    inboxListActivity.messageListAdapter.setArrayList(inboxListActivity.recordsStored);
-                    inboxListActivity.progressDialogInbox.dismiss();
+                    detailsActivity.fetchMessageThread = null;
+                    detailsActivity.messageListAdapter.setArrayList(detailsActivity.recordsStored);
+                    detailsActivity.progressDialogInbox.dismiss();
                 }
             }
     }
@@ -271,6 +263,5 @@ public class DetailsActivity extends AppCompatActivity {
                 stopThread();
             }
     };
-
 
 }

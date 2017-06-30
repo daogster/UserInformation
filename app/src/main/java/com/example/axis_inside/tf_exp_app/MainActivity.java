@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        stopLocationUpdates();
         mGoogleApiClient.disconnect();
         super.onStop();
     }
@@ -278,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
     public void getCalenderDetails(View view) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("TYPE", "CALENDER");
+        intent.putExtra("TYPE", "+");
         startActivity(intent);
     }
 
@@ -387,7 +388,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates();
+
     }
 
     @Override
