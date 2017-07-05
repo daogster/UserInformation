@@ -87,8 +87,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
         @Override
         public void run() {
-            //recordsStored = fetchInboxSms(TYPE_INCOMING_MESSAGE);
-            //recordsStored = fetchCallLogs(TYPE_INCOMING_MESSAGE);
+            //recordsStored = FetchAddressIntentServicerecordsStored = fetchCallLogs(TYPE_INCOMING_MESSAGE);
             if(detailsType.equals("SMS")){
                 recordsStored = mobileDataFetcher.fetchInboxSms(TYPE_INCOMING_MESSAGE);
             }else if(detailsType.equals("CALLS")){

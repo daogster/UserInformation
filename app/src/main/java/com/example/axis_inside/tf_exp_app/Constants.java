@@ -15,4 +15,9 @@ public class Constants {
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME +
             ".LOCATION_DATA_EXTRA";
 
+
+    public static final String IDENTITY_POOL_ID = "us-west-2:99b0c053-94c1-4ded-bf00-31f2748eda2d";
+    // Note that spaces are not allowed in the table name
+    public static final String TEST_TABLE_NAME = "TF_USER_LOCATION";
+
 }

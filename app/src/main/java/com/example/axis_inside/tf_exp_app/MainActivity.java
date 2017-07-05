@@ -539,6 +539,7 @@ public class MainActivity extends AppCompatActivity
                 settingsBundle.putString("location",result);
                 ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
 
+                DynamoDBManager.insertUsers(getApplicationContext(),result);
                 displayDialog("Device Location", result);
 
             }
