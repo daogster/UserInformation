@@ -1,9 +1,12 @@
 package com.example.axis_inside.tf_exp_app;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -65,10 +68,28 @@ public class MainActivity extends AppCompatActivity
     private ProgressDialog mProgressBar;
 
 
+    /*
+    Sync Adapter data
+     */
+    // The authority for the sync adapter's content provider
+    public static final String AUTHORITY = "com.example.axis_inside.tf_exp_app";
+    // An account type, in the form of a domain name
+    public static final String ACCOUNT_TYPE = "user.information";
+    // The account name
+    public static final String ACCOUNT = "dummy_user_information";
+    // Instance fields
+    Account mAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*
+        create a dummy account
+         */
+        mAccount = CreateSyncAccount(this);
+
+
         updateValuesFromBundle(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,6 +160,35 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    public static Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(
+                ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call context.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        }
+
+        return newAccount;
     }
 
     private void setupProgressBar() {
@@ -479,7 +529,18 @@ public class MainActivity extends AppCompatActivity
                         " Longitude" + lon +
                         " " + resultData.getString(Constants.RESULT_DATA_KEY);
 
+
+                // Pass the settings flags by inserting them in a bundle
+                Bundle settingsBundle = new Bundle();
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                settingsBundle.putString("location",result);
+                ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+
                 displayDialog("Device Location", result);
+
             }
 
         }
