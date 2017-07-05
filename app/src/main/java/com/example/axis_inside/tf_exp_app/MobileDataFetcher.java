@@ -39,11 +39,12 @@ public class MobileDataFetcher {
     public ArrayList<CommonDetails> fetchInboxSms(int type) {
         ArrayList<CommonDetails> smsInbox = new ArrayList<CommonDetails>();
         Uri uriSms = Uri.parse("content://sms");
-        Cursor cursor = mContext.getContentResolver()
+/*        Cursor cursor = mContext.getContentResolver()
                 .query(uriSms,
                         new String[] { "_id", "address", "date", "body",
                                 "type", "read" }, "type=" + type, null,
-                        "date" + " COLLATE LOCALIZED ASC");
+                        "date" + " COLLATE LOCALIZED ASC");*/
+        Cursor cursor = mContext.getContentResolver().query(uriSms,null,null,null,null);
         if (cursor != null) {
             cursor.moveToLast();
             if (cursor.getCount() > 0) {
