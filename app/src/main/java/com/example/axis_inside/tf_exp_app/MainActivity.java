@@ -27,6 +27,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
+import android.util.Patterns;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -55,6 +56,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -72,11 +74,11 @@ public class MainActivity extends AppCompatActivity
     Sync Adapter data
      */
     // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "com.example.axis_inside.tf_exp_app";
+    public static final String AUTHORITY = "com.example.sync";
     // An account type, in the form of a domain name
-    public static final String ACCOUNT_TYPE = "user.information";
+    public static final String ACCOUNT_TYPE = "com.example.axis_inside.tf_exp_app";
     // The account name
-    public static final String ACCOUNT = "dummy_user_information";
+    public static final String ACCOUNT = "datasync";
     // Instance fields
     Account mAccount;
 
@@ -87,7 +89,8 @@ public class MainActivity extends AppCompatActivity
         /*
         create a dummy account
          */
-        mAccount = CreateSyncAccount(this);
+        //mAccount = CreateSyncAccount(this);
+        AccountGeneral.createSyncAccount(this);
 
 
         updateValuesFromBundle(savedInstanceState);
@@ -162,34 +165,36 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public static Account CreateSyncAccount(Context context) {
+/*    public static Account CreateSyncAccount(Context context) {
         // Create the account type and default account
         Account newAccount = new Account(
                 ACCOUNT, ACCOUNT_TYPE);
         // Get an instance of the Android account manager
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
-        /*
+                        Context.ACCOUNT_SERVICE);
+
+
+        *//*
          * Add the account and account type, no password or user data
          * If successful, return the Account object, otherwise report an error.
-         */
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-            /*
+         *//*
+        if (accountManager.addAccountExplicitly(newAccount, "123456", null)) {
+            *//*
              * If you don't set android:syncable="true" in
              * in your <provider> element in the manifest,
              * then call context.setIsSyncable(account, AUTHORITY, 1)
              * here.
-             */
+             *//*
         } else {
-            /*
+            *//*
              * The account exists or some other error occurred. Log this, report it,
              * or handle it internally.
-             */
+             *//*
         }
 
         return newAccount;
-    }
+    }*/
 
     private void setupProgressBar() {
         mProgressBar = new ProgressDialog(this);
@@ -536,10 +541,10 @@ public class MainActivity extends AppCompatActivity
                         ContentResolver.SYNC_EXTRAS_MANUAL, true);
                 settingsBundle.putBoolean(
                         ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                settingsBundle.putString("location",result);
-                ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+                //settingsBundle.putString("location",result);
 
-                DynamoDBManager.insertUsers(getApplicationContext(),result);
+                //DynamoDBManager.insertUsers(getApplicationContext(),result);
+                ContentResolver.requestSync(AccountGeneral.getAccount(), AUTHORITY, settingsBundle);
                 displayDialog("Device Location", result);
 
             }

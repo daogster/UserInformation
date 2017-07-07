@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="com.example.axis_inside.tf_exp_app"
-    android:accountType="user.information"
+    android:contentAuthority="com.example.sync"
+    android:accountType="com.example.syncaccount"
     android:userVisible="false"
     android:supportsUploading="false"
     android:allowParallelSyncs="false"

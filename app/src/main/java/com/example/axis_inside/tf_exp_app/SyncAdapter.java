@@ -7,29 +7,46 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Created by axis-inside on 5/7/17.
  */
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-
+    public static final String TAG = SyncAdapter.class.getSimpleName();
     private ContentResolver mContentResolver;
+    private Context mContext;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mContext = context;
         mContentResolver = context.getContentResolver();
     }
 
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
+        mContext = context;
         mContentResolver = context.getContentResolver();
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 
-        String location = extras.getString("location");
+        //String location = extras.getString("location");
+        DynamoDBManager.insertUsers(mContext,"hiiii");
+        Log.v(TAG,"Location Data Added to AWS");
+    }
 
+
+    /**
+     * Manual force Android to perform a sync with our SyncAdapter.
+     */
+    public static void performSync() {
+/*        Bundle b = new Bundle();
+        b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(AccountGeneral.getAccount(),
+                "com.example.sync", b)*/;
     }
 }
