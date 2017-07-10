@@ -8,7 +8,9 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.example.axis_inside.tf_exp_app.Models.SmsModel;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -17,10 +19,24 @@ import java.util.Random;
 
 public class DynamoDBManager {
     private static final String TAG = "DynamoDBManager";
+    private static AmazonDynamoDBClient amazonDynamoDBClient;
+    private static DynamoDBMapper dynamoDBMapper;
 
+    private static AmazonDynamoDBClient getAmazonDynamoDBClient(Context context){
+        if(amazonDynamoDBClient == null){
+            return new AmazonClientManager(context).ddb();
+        }
+        return amazonDynamoDBClient;
+    }
+
+    private static DynamoDBMapper getDynamoDBMapper(Context context){
+        if(dynamoDBMapper == null){
+            return new DynamoDBMapper(getAmazonDynamoDBClient(context));
+        }
+        return dynamoDBMapper;
+    }
     public static void insertUsers(Context context, String data) {
-        AmazonDynamoDBClient ddb = new AmazonClientManager(context).ddb();
-        final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        final DynamoDBMapper mapper = getDynamoDBMapper(context);
         final UserLocation userLocation = new UserLocation();
         int tmp = (new Random().nextInt(5));
         userLocation.setUserId(String.valueOf(System.currentTimeMillis()));
@@ -34,6 +50,16 @@ public class DynamoDBManager {
         }).start();
 
 
+    }
+
+    public static void insertSms(Context context, final ArrayList<SmsModel> smsModel){
+        final DynamoDBMapper mapper = getDynamoDBMapper(context);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mapper.batchSave(smsModel);
+            }
+        }).start();
     }
 
     @DynamoDBTable(tableName = Constants.TEST_TABLE_NAME)

@@ -20,4 +20,6 @@ public class Constants {
     // Note that spaces are not allowed in the table name
     public static final String TEST_TABLE_NAME = "TF_USER_LOCATION";
 
+    public static final String DYNAMO_DB_SMS_TABLE = "TF_USER_SMS";
+
 }

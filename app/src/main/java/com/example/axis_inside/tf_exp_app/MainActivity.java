@@ -40,6 +40,7 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.axis_inside.tf_exp_app.LocalCache.SharedPreferenceHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity
         //mAccount = CreateSyncAccount(this);
         AccountGeneral.createSyncAccount(this);
         setUpContentObserver();
+
+        /*
+        set phone location
+         */
+        TelephonyManager m_telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String IMEI = m_telephonyManager.getDeviceId();
+        SharedPreferenceHelper.getSharedPreference(this).edit().putString(SharedPreferenceHelper.IMEI,IMEI).commit();
 
         updateValuesFromBundle(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -340,6 +348,8 @@ public class MainActivity extends AppCompatActivity
         TelephonyManager m_telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String IMEI = m_telephonyManager.getDeviceId();
         String IMSI = m_telephonyManager.getSubscriberId();
+
+        SharedPreferenceHelper.getSharedPreference(this).edit().putString(SharedPreferenceHelper.IMEI,IMEI).commit();
 
         String result = "SDK VERSION:" + SDK_VERSION +
                 " DEVICE:" + DEVICE +

@@ -45,6 +45,10 @@ public class MobileDataFetcher {
                                 "type", "read" }, "type=" + type, null,
                         "date" + " COLLATE LOCALIZED ASC");*/
         Cursor cursor = mContext.getContentResolver().query(uriSms,null,null,null,null);
+
+        //long temp = System.currentTimeMillis();
+        //Cursor cursor = mContext.getContentResolver().query(uriSms,null,"date >=?",new String[]{String.valueOf(temp)},null);
+
         if (cursor != null) {
             cursor.moveToLast();
             if (cursor.getCount() > 0) {
