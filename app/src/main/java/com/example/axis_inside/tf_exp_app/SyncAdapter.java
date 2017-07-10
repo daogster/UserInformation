@@ -9,6 +9,8 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.Random;
+
 /**
  * Created by axis-inside on 5/7/17.
  */
@@ -34,8 +36,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 
         //String location = extras.getString("location");
-        DynamoDBManager.insertUsers(mContext,"hiiii");
+        syncSMS();
+        Log.v("SyncResult",syncResult.toString());
+        int tmp = (new Random().nextInt(15));
+        DynamoDBManager.insertUsers(mContext,String.valueOf(tmp));
         Log.v(TAG,"Location Data Added to AWS");
+    }
+
+    private void syncSMS() {
     }
 
 
@@ -43,10 +51,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * Manual force Android to perform a sync with our SyncAdapter.
      */
     public static void performSync() {
-/*        Bundle b = new Bundle();
+        Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(AccountGeneral.getAccount(),
-                "com.example.sync", b)*/;
+                AccountGeneral.AUTHORITY, b);
     }
 }

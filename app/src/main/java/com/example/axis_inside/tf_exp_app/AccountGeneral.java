@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 /**
@@ -21,7 +22,8 @@ public class AccountGeneral {
     /**
      * This is the name that appears in the Android 'Accounts' settings.
      */
-    private static final String ACCOUNT_NAME = "Example Sync";
+    private static final String ACCOUNT_NAME = "ExampleSync";
+    public static final String AUTHORITY = "com.example.sync";
 
 
     /**
@@ -46,8 +48,8 @@ public class AccountGeneral {
 
         // Attempt to explicitly create the account with no password or extra data
         if (manager.addAccountExplicitly(account, null, null)) {
-            final String AUTHORITY = "com.example.sync";
-            final long SYNC_FREQUENCY = 60 * 60; // 1 hour (seconds)
+            //final String AUTHORITY = "com.example.sync";
+            final long SYNC_FREQUENCY = 60;//60 * 60; // 1 hour (seconds)
 
             // Inform the system that this account supports sync
             ContentResolver.setIsSyncable(account, AUTHORITY, 1);
@@ -64,7 +66,7 @@ public class AccountGeneral {
 
         // Force a sync if the account was just created
         if (created) {
-            //SyncAdapter.performSync();
+            SyncAdapter.performSync();
         }
     }
 }

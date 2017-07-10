@@ -23,7 +23,7 @@ public class DynamoDBManager {
         final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
         final UserLocation userLocation = new UserLocation();
         int tmp = (new Random().nextInt(5));
-        userLocation.setUserId(String.valueOf(tmp));
+        userLocation.setUserId(String.valueOf(System.currentTimeMillis()));
         userLocation.setData(data);
         userLocation.setTimeStamp(System.currentTimeMillis());
         new Thread(new Runnable() {

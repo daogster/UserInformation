@@ -68,19 +68,8 @@ public class MainActivity extends AppCompatActivity
     private boolean mRequestingLocationUpdates = false;
     private MainActivity.AddressResultReceiver mResultReceiver;
     private ProgressDialog mProgressBar;
-
-
-    /*
-    Sync Adapter data
-     */
-    // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "com.example.sync";
-    // An account type, in the form of a domain name
-    public static final String ACCOUNT_TYPE = "com.example.axis_inside.tf_exp_app";
-    // The account name
-    public static final String ACCOUNT = "datasync";
-    // Instance fields
-    Account mAccount;
+    private ContentResolver contentResolver;
+    private DataObserver dataObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +80,7 @@ public class MainActivity extends AppCompatActivity
          */
         //mAccount = CreateSyncAccount(this);
         AccountGeneral.createSyncAccount(this);
-
+        setUpContentObserver();
 
         updateValuesFromBundle(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -165,36 +154,24 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-/*    public static Account CreateSyncAccount(Context context) {
-        // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
-        // Get an instance of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(
-                        Context.ACCOUNT_SERVICE);
+    private void setUpContentObserver() {
+        contentResolver = getContentResolver();
+        String SCHEME = "content://";
+        String TABLE_PATH = "sms";
+        //Uri uriSms = Uri.parse("content://sms");
+
+        // Construct a URI that points to the content provider data table
+        Uri mUri = new Uri.Builder()
+                .scheme(SCHEME)
+                .authority(AccountGeneral.AUTHORITY)
+                .path(TABLE_PATH)
+                .build();
 
 
-        *//*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         *//*
-        if (accountManager.addAccountExplicitly(newAccount, "123456", null)) {
-            *//*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call context.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             *//*
-        } else {
-            *//*
-             * The account exists or some other error occurred. Log this, report it,
-             * or handle it internally.
-             *//*
-        }
+        dataObserver = new DataObserver();
 
-        return newAccount;
-    }*/
+        contentResolver.registerContentObserver(mUri, true, dataObserver);
+    }
 
     private void setupProgressBar() {
         mProgressBar = new ProgressDialog(this);
@@ -229,6 +206,10 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         stopLocationUpdates();
         mGoogleApiClient.disconnect();
+        if (dataObserver != null) {
+            // Unregister the observer at the stop of our activity
+            getContentResolver().unregisterContentObserver(dataObserver);
+        }
         super.onStop();
     }
 
@@ -543,8 +524,7 @@ public class MainActivity extends AppCompatActivity
                         ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
                 //settingsBundle.putString("location",result);
 
-                //DynamoDBManager.insertUsers(getApplicationContext(),result);
-                ContentResolver.requestSync(AccountGeneral.getAccount(), AUTHORITY, settingsBundle);
+                ContentResolver.requestSync(AccountGeneral.getAccount(), AccountGeneral.AUTHORITY, settingsBundle);
                 displayDialog("Device Location", result);
 
             }
