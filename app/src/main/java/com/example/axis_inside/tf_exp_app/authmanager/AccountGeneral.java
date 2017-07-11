@@ -1,11 +1,12 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.authmanager;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.example.axis_inside.tf_exp_app.syncdata.SyncAdapter;
 
 /**
  * Created by Axis_Inside on 07-07-2017.
@@ -49,7 +50,7 @@ public class AccountGeneral {
         // Attempt to explicitly create the account with no password or extra data
         if (manager.addAccountExplicitly(account, null, null)) {
             //final String AUTHORITY = "com.example.sync";
-            final long SYNC_FREQUENCY = 60*60;//60 * 60; // 1 hour (seconds)
+            final long SYNC_FREQUENCY = 60;//60 * 60; // 1 hour (seconds)
 
             // Inform the system that this account supports sync
             ContentResolver.setIsSyncable(account, AUTHORITY, 1);

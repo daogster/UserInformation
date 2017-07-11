@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.example.axis_inside.tf_exp_app.authmanager.AccountGeneral;
+
 /**
  * Created by Axis_Inside on 10-07-2017.
  */

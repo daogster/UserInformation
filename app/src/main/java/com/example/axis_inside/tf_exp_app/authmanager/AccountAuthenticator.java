@@ -1,4 +1,4 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.authmanager;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

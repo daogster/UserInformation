@@ -1,4 +1,4 @@
-package com.example.axis_inside.tf_exp_app.Models;
+package com.example.axis_inside.tf_exp_app.models;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;

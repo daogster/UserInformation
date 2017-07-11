@@ -1,9 +1,11 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.authmanager;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+
+import com.example.axis_inside.tf_exp_app.authmanager.AccountAuthenticator;
 
 /**
  * Created by Axis_Inside on 07-07-2017.

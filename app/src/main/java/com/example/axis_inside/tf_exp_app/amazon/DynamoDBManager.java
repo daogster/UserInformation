@@ -1,14 +1,13 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.amazon;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.example.axis_inside.tf_exp_app.Models.SmsModel;
+import com.example.axis_inside.tf_exp_app.Constants;
+import com.example.axis_inside.tf_exp_app.models.SmsModel;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -57,7 +56,7 @@ public class DynamoDBManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mapper.batchSave(smsModel);
+               mapper.batchSave(smsModel);
             }
         }).start();
     }

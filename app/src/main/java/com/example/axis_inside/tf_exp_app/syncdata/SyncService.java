@@ -1,9 +1,11 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.syncdata;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+
+import com.example.axis_inside.tf_exp_app.syncdata.SyncAdapter;
 
 /**
  * Created by axis-inside on 5/7/17.

@@ -14,17 +14,18 @@ import android.support.annotation.Nullable;
 public class DataProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
-        return false;
+        return true;
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
 
-        Uri uriSms = Uri.parse("content://sms");
+/*        Uri uriSms = Uri.parse("content://sms");
         Cursor cursor = getContext().getContentResolver().query(uriSms,null,null,null,null);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return cursor;
+        return cursor;*/
+        return null;
     }
 
     @Nullable

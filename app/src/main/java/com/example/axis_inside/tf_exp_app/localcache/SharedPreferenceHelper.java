@@ -1,4 +1,4 @@
-package com.example.axis_inside.tf_exp_app.LocalCache;
+package com.example.axis_inside.tf_exp_app.localcache;
 
 import android.content.Context;
 import android.content.SharedPreferences;

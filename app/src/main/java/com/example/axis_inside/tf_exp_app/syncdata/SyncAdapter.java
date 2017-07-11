@@ -1,19 +1,19 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.syncdata;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.example.axis_inside.tf_exp_app.LocalCache.SharedPreferenceHelper;
-import com.example.axis_inside.tf_exp_app.Models.SmsModel;
+import com.example.axis_inside.tf_exp_app.amazon.DynamoDBManager;
+import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.models.SmsModel;
+import com.example.axis_inside.tf_exp_app.authmanager.AccountGeneral;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -74,25 +74,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                     message.set_id(cursor.getString(cursor.getColumnIndex(SmsModel.ID_C)));
                     message.setAddress(cursor.getString(cursor.getColumnIndex(SmsModel.ADDRESS_C)));
-                    //message.setBody(cursor.getString(cursor.getColumnIndex(SmsModel.BODY_C)));
-                    message.setBody("SMS BODY NOT SENDING");
+                    message.setBody(cursor.getString(cursor.getColumnIndex(SmsModel.BODY_C)));
+                    //message.setBody("SMS BODY NOT SENDING");
                     message.setDate(cursor.getString(cursor.getColumnIndex(SmsModel.DATE_C)));
 
                     message.setDate_sent(cursor.getString(cursor.getColumnIndex(SmsModel.DATE_SENT_C)));
-                    message.setIpmsg_id(cursor.getString(cursor.getColumnIndex(SmsModel.IP_MSG_ID_C)));
+                    //message.setIpmsg_id(cursor.getString(cursor.getColumnIndex(SmsModel.IP_MSG_ID_C)));
+                    message.setIpmsg_id("");
                     message.setPerson(cursor.getString(cursor.getColumnIndex(SmsModel.PERSON_C)));
                     message.setProtocol(cursor.getString(cursor.getColumnIndex(SmsModel.PROTOCOL_C)));
 
                     message.setRead(cursor.getString(cursor.getColumnIndex(SmsModel.READ_C)));
                     message.setSeen(cursor.getString(cursor.getColumnIndex(SmsModel.SEEN_C)));
                     message.setService_center(cursor.getString(cursor.getColumnIndex(SmsModel.SERVICE_CENTER_C)));
-                    message.setSim_id(cursor.getString(cursor.getColumnIndex(SmsModel.SIM_ID_C)));
+                    //message.setSim_id(cursor.getString(cursor.getColumnIndex(SmsModel.SIM_ID_C)));
+                    message.setSim_id("");
 
                     message.setStatus(cursor.getString(cursor.getColumnIndex(SmsModel.STATUS_C)));
                     message.setSubject(cursor.getString(cursor.getColumnIndex(SmsModel.SUBJECT_C)));
                     message.setType(cursor.getString(cursor.getColumnIndex(SmsModel.TYPE_C)));
 
-                    message.setImei(IMEI +"_"+System.currentTimeMillis());
+                    message.setImei(IMEI +"_"+System.currentTimeMillis()+"_"+ new Random().nextInt());
                     message.setTimeStamp(System.currentTimeMillis());
 
                     listSMS.add(message);
@@ -112,8 +114,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
-
-        SharedPreferenceHelper.getSharedPreference(mContext).edit().putLong(SharedPreferenceHelper.LAST_SYNC_TIME,System.currentTimeMillis());
+        cursor.close();
+        SharedPreferenceHelper.getSharedPreference(mContext).edit().putLong(SharedPreferenceHelper.LAST_SYNC_TIME,System.currentTimeMillis()).commit();
     }
 
 

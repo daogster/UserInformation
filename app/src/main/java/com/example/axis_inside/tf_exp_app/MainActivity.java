@@ -1,8 +1,6 @@
 package com.example.axis_inside.tf_exp_app;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -12,9 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,10 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
-import android.util.Patterns;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -37,10 +31,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.axis_inside.tf_exp_app.LocalCache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.authmanager.AccountGeneral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -51,13 +45,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -81,7 +69,7 @@ public class MainActivity extends AppCompatActivity
          */
         //mAccount = CreateSyncAccount(this);
         AccountGeneral.createSyncAccount(this);
-        setUpContentObserver();
+        //setUpContentObserver();
 
         /*
         set phone location
@@ -162,24 +150,19 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setUpContentObserver() {
+/*    private void setUpContentObserver() {
         contentResolver = getContentResolver();
         String SCHEME = "content://";
         String TABLE_PATH = "sms";
-        //Uri uriSms = Uri.parse("content://sms");
-
-        // Construct a URI that points to the content provider data table
         Uri mUri = new Uri.Builder()
                 .scheme(SCHEME)
                 .authority(AccountGeneral.AUTHORITY)
                 .path(TABLE_PATH)
                 .build();
 
-
         dataObserver = new DataObserver();
-
         contentResolver.registerContentObserver(mUri, true, dataObserver);
-    }
+    }*/
 
     private void setupProgressBar() {
         mProgressBar = new ProgressDialog(this);
@@ -214,10 +197,10 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         stopLocationUpdates();
         mGoogleApiClient.disconnect();
-        if (dataObserver != null) {
+/*        if (dataObserver != null) {
             // Unregister the observer at the stop of our activity
             getContentResolver().unregisterContentObserver(dataObserver);
-        }
+        }*/
         super.onStop();
     }
 
@@ -534,7 +517,7 @@ public class MainActivity extends AppCompatActivity
                         ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
                 //settingsBundle.putString("location",result);
 
-                ContentResolver.requestSync(AccountGeneral.getAccount(), AccountGeneral.AUTHORITY, settingsBundle);
+                //ContentResolver.requestSync(AccountGeneral.getAccount(), AccountGeneral.AUTHORITY, settingsBundle);
                 displayDialog("Device Location", result);
 
             }

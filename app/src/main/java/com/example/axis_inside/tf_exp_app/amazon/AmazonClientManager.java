@@ -1,4 +1,4 @@
-package com.example.axis_inside.tf_exp_app;
+package com.example.axis_inside.tf_exp_app.amazon;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +8,7 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.example.axis_inside.tf_exp_app.Constants;
 
 /**
  * Created by rishav on 27/6/17.
