@@ -2,14 +2,24 @@ package com.example.axis_inside.tf_exp_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.telephony.TelephonyManager;
+import android.view.View;
+
+import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.models.MixDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.BATTERY_SERVICE;
 
 /**
  * Created by axis-inside on 30/6/17.
@@ -148,4 +158,73 @@ public class MobileDataFetcher {
         return browsingDetails;
     }
 
+
+    public String getPowerDetails(){
+        int batLabel = 0;
+/*        BatteryManager batteryManager = (BatteryManager) mContext.getSystemService(mContext.BATTERY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            batLabel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        } else {
+
+        }
+        return String.valueOf(batLabel);*/
+
+        IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = mContext.registerReceiver(null, iFilter);
+
+        int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
+        //int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
+
+        //float batteryPct = (level / (float) scale)*100;
+
+        return String.valueOf(level);
+    }
+
+    public MixDataModel.PhoneDetails getPhoneDetails() {
+
+        //MixDataModel.PhoneDetails phoneDetails = new MixDataModel.PhoneDetails();
+        MixDataModel.PhoneDetails phoneDetails = new MixDataModel().getPhoneDetailsInstance();
+
+
+        String SDK_VERSION = String.valueOf(Build.VERSION.SDK_INT);
+        String DEVICE = Build.DEVICE;
+        String MODEL = Build.MODEL;
+        String SERIAL = Build.SERIAL;
+
+        TelephonyManager m_telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        String IMEI = m_telephonyManager.getDeviceId();
+        String IMSI = m_telephonyManager.getSubscriberId();
+
+
+        phoneDetails.setDeviceSdkVersion(SDK_VERSION);
+        phoneDetails.setDeviceModel(MODEL);
+        phoneDetails.setDeviceSerialNumber(SERIAL);
+        phoneDetails.setDeviceIMEI(IMEI);
+        phoneDetails.setDeviceIMSI(IMSI);
+
+        return phoneDetails;
+    }
+
+
+    public ArrayList<MixDataModel.InstalledApps> getDeviceInstalledApps(){
+
+        ArrayList<MixDataModel.InstalledApps> installedAppList = new ArrayList<>();
+
+        final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final List<ResolveInfo> packages = mContext.getPackageManager().queryIntentActivities( mainIntent, 0);
+
+        for(ResolveInfo r : packages){
+            String appName = (String)((r != null) ? mContext.getPackageManager().getApplicationLabel(r.activityInfo.applicationInfo) : "???");
+            String packageName = r.activityInfo.applicationInfo.packageName.toString();
+
+            MixDataModel.InstalledApps installedApps = new MixDataModel().getInstalledAppsInstance();
+            installedApps.setAppName(appName);
+            installedApps.setPackageName(packageName);
+
+            installedAppList.add(installedApps);
+        }
+
+        return installedAppList;
+    }
 }

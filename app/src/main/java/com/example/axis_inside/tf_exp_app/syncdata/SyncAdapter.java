@@ -9,14 +9,22 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CallLog;
+import android.support.v4.util.TimeUtils;
 
+import com.example.axis_inside.tf_exp_app.CommonDetails;
+import com.example.axis_inside.tf_exp_app.MainActivity;
+import com.example.axis_inside.tf_exp_app.MobileDataFetcher;
 import com.example.axis_inside.tf_exp_app.amazon.DynamoDBManager;
 import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.models.CallModel;
+import com.example.axis_inside.tf_exp_app.models.MixDataModel;
 import com.example.axis_inside.tf_exp_app.models.SmsModel;
 import com.example.axis_inside.tf_exp_app.authmanager.AccountGeneral;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by axis-inside on 5/7/17.
@@ -26,6 +34,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = SyncAdapter.class.getSimpleName();
     private ContentResolver mContentResolver;
     private Context mContext;
+    private static long nextSyncTimeForMixData = 0;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -41,23 +50,105 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-
         //String location = extras.getString("location");
         syncSMS();
-/*        Log.v("SyncResult",syncResult.toString());
-        int tmp = (new Random().nextInt(15));
-        DynamoDBManager.insertUsers(mContext,String.valueOf(tmp));
-        Log.v(TAG,"Location Data Added to AWS");*/
+        syncCall();
+        syncMixData();
+    }
+
+    private void syncMixData() {
+        String IMEI = SharedPreferenceHelper.getIMEI(mContext);
+        MobileDataFetcher mobileDataFetcher = MobileDataFetcher.getMobileDataFetcher(mContext);
+
+        String batLable = mobileDataFetcher.getPowerDetails();
+
+        MixDataModel.PhoneDetails phoneDetails = mobileDataFetcher.getPhoneDetails();
+        ArrayList<MixDataModel.InstalledApps> installedAppList = mobileDataFetcher.getDeviceInstalledApps();
+
+
+        MixDataModel.Location location = new MixDataModel().getLocationInstance();
+        location.setLatitude(SharedPreferenceHelper.getLatitude(mContext));
+        location.setLongitude(SharedPreferenceHelper.getLongitude(mContext));
+
+        MixDataModel mixModel = new MixDataModel();
+        mixModel.setPower(batLable);
+        mixModel.setInstalledApps(installedAppList);
+        mixModel.setPhoneDetails(phoneDetails);
+        mixModel.setLocation(location);
+
+        mixModel.setImei(IMEI +"_"+System.currentTimeMillis()+"_"+ new Random().nextInt());
+        mixModel.setTimeStamp(System.currentTimeMillis());
+
+        nextSyncTimeForMixData = SharedPreferenceHelper.getNextMixDataSyncTime(mContext);
+        long oneDayMilliSeconds = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+        if(nextSyncTimeForMixData == 0 || System.currentTimeMillis() >  nextSyncTimeForMixData ){
+            DynamoDBManager.insertMisData(mContext,mixModel);
+            SharedPreferenceHelper.setNextMixDataSyncTime(mContext,System.currentTimeMillis() + oneDayMilliSeconds);
+        }
+    }
+
+    private void syncCall() {
+        Uri uriCalls = Uri.parse("content://call_log/calls");
+
+        String IMEI = SharedPreferenceHelper.getIMEI(mContext);
+        long lastCallSyncTime = SharedPreferenceHelper.getLastCallSyncTime(mContext);
+
+
+        Cursor cursor;
+        if(lastCallSyncTime == 0){
+            cursor = mContext.getContentResolver().query(uriCalls,null,null,null,null);
+        }else {
+            cursor = mContext.getContentResolver().query(uriCalls,null,"date >=?",new String[]{String.valueOf(lastCallSyncTime)},null);
+        }
+
+        ArrayList<CallModel> listCalls = new ArrayList<>();
+
+        if(cursor != null){
+            while (cursor.moveToNext()){
+                CallModel callModel = new CallModel();
+                callModel.set_id(cursor.getString(cursor.getColumnIndex(CallModel.ID_C)));
+                callModel.setType(cursor.getString(cursor.getColumnIndex(CallModel.TYPE_C)));
+                callModel.setCountryiso(cursor.getString(cursor.getColumnIndex(CallModel.COUNTRY_ISO_C)));
+                callModel.setDate(cursor.getString(cursor.getColumnIndex(CallModel.DATE_C)));
+                callModel.setDuration(cursor.getString(cursor.getColumnIndex(CallModel.DURATION_C)));
+                callModel.setName(cursor.getString(cursor.getColumnIndex(CallModel.NAME_C)));
+                callModel.setNumber(cursor.getString(cursor.getColumnIndex(CallModel.NUMBER_C)));
+                callModel.setNumbertype(cursor.getString(cursor.getColumnIndex(CallModel.NUMBER_TYPE_C)));
+                //callModel.setSimid(cursor.getString(cursor.getColumnIndex(CallModel.SIM_ID_C)));
+                callModel.setSimid("");
+
+                callModel.setImei(IMEI +"_"+System.currentTimeMillis()+"_"+ new Random().nextInt());
+                callModel.setTimeStamp(System.currentTimeMillis());
+                listCalls.add(callModel);
+
+                if(listCalls.size() == 200){
+                    ArrayList<CallModel> temp = new ArrayList<>();
+                    temp.addAll(listCalls);
+                    DynamoDBManager.insertCall(mContext,temp);
+                    listCalls.clear();
+                }
+            }
+
+            if(listCalls.size() > 0){
+                ArrayList<CallModel> temp = new ArrayList<>();
+                temp.addAll(listCalls);
+                DynamoDBManager.insertCall(mContext,temp);
+                listCalls.clear();
+            }
+        }
+        cursor.close();
+        //SharedPreferenceHelper.setLastCallSyncTime(mContext,System.currentTimeMillis());
     }
 
     private void syncSMS() {
         Uri uriSms = Uri.parse("content://sms");
 
-        String IMEI = SharedPreferenceHelper.getSharedPreference(mContext).getString(SharedPreferenceHelper.IMEI,"DEFAULT_IMEI");
+        String IMEI = SharedPreferenceHelper.getIMEI(mContext);
 
-        long lastSyncTime = SharedPreferenceHelper.getSharedPreference(mContext).getLong(SharedPreferenceHelper.LAST_SYNC_TIME,0);
+        long lastSyncTime = SharedPreferenceHelper.getLastSmsSyncTime(mContext);
 
         Cursor cursor;
+
         if(lastSyncTime == 0){
             cursor = mContext.getContentResolver().query(uriSms,null,null,null,null);
         }else {
@@ -115,7 +206,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
         cursor.close();
-        SharedPreferenceHelper.getSharedPreference(mContext).edit().putLong(SharedPreferenceHelper.LAST_SYNC_TIME,System.currentTimeMillis()).commit();
+        SharedPreferenceHelper.setLastSmsSyncTime(mContext,System.currentTimeMillis());
     }
 
 

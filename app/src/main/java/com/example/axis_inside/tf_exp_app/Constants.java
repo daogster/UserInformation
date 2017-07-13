@@ -21,5 +21,7 @@ public class Constants {
     public static final String TEST_TABLE_NAME = "TF_USER_LOCATION";
 
     public static final String DYNAMO_DB_SMS_TABLE = "TF_USER_SMS";
+    public static final String DYNAMO_DB_CALL_TABLE = "TF_USER_CALL";
+    public static final String DYNAMO_DB_MIX_DATA_TABLE = "TF_USER_MIXDATA";
 
 }

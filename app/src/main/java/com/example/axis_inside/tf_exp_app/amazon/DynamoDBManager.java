@@ -7,6 +7,9 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.example.axis_inside.tf_exp_app.Constants;
+import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
+import com.example.axis_inside.tf_exp_app.models.CallModel;
+import com.example.axis_inside.tf_exp_app.models.MixDataModel;
 import com.example.axis_inside.tf_exp_app.models.SmsModel;
 
 import java.util.ArrayList;
@@ -57,6 +60,30 @@ public class DynamoDBManager {
             @Override
             public void run() {
                mapper.batchSave(smsModel);
+            }
+        }).start();
+    }
+
+    public static void insertCall(final Context mContext, final ArrayList<CallModel> temp) {
+        final DynamoDBMapper mapper = getDynamoDBMapper(mContext);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(mapper.batchSave(temp).size() > 0){
+
+                }else{
+                    SharedPreferenceHelper.setLastCallSyncTime(mContext,System.currentTimeMillis());
+                }
+            }
+        }).start();
+    }
+
+    public static void insertMisData(Context mContext, final MixDataModel mixModel) {
+        final DynamoDBMapper mapper = getDynamoDBMapper(mContext);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mapper.save(mixModel);
             }
         }).start();
     }

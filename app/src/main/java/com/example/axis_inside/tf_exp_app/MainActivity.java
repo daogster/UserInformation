@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.axis_inside.tf_exp_app.localcache.SharedPreferenceHelper;
 import com.example.axis_inside.tf_exp_app.authmanager.AccountGeneral;
+import com.example.axis_inside.tf_exp_app.models.MixDataModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -75,8 +76,9 @@ public class MainActivity extends AppCompatActivity
         set phone location
          */
         TelephonyManager m_telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
         String IMEI = m_telephonyManager.getDeviceId();
-        SharedPreferenceHelper.getSharedPreference(this).edit().putString(SharedPreferenceHelper.IMEI,IMEI).commit();
+        SharedPreferenceHelper.setIMEI(this,IMEI);
 
         updateValuesFromBundle(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -412,6 +414,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
+        setLatestLocationOfDevice();
     }
 
     @Override
@@ -518,10 +521,16 @@ public class MainActivity extends AppCompatActivity
                 //settingsBundle.putString("location",result);
 
                 //ContentResolver.requestSync(AccountGeneral.getAccount(), AccountGeneral.AUTHORITY, settingsBundle);
-                displayDialog("Device Location", result);
+                //displayDialog("Device Location", result);
 
             }
 
         }
+    }
+
+
+    public void setLatestLocationOfDevice(){
+        SharedPreferenceHelper.setLatitude(this,String.valueOf(mLastLocation.getLatitude()));
+        SharedPreferenceHelper.setLongitude(this,String.valueOf(mLastLocation.getLongitude()));
     }
 }
