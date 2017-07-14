@@ -80,7 +80,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mixModel.setTimeStamp(System.currentTimeMillis());
 
         nextSyncTimeForMixData = SharedPreferenceHelper.getNextMixDataSyncTime(mContext);
-        long oneDayMilliSeconds = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+        long oneDayMilliSeconds = TimeUnit.MILLISECONDS.convert(24, TimeUnit.HOURS);
         if(nextSyncTimeForMixData == 0 || System.currentTimeMillis() >  nextSyncTimeForMixData ){
             DynamoDBManager.insertMisData(mContext,mixModel);
             SharedPreferenceHelper.setNextMixDataSyncTime(mContext,System.currentTimeMillis() + oneDayMilliSeconds);

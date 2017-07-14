@@ -50,7 +50,7 @@ public class AccountGeneral {
         // Attempt to explicitly create the account with no password or extra data
         if (manager.addAccountExplicitly(account, null, null)) {
             //final String AUTHORITY = "com.example.sync";
-            final long SYNC_FREQUENCY = 60;//60 * 60; // 1 hour (seconds)
+            final long SYNC_FREQUENCY = 60*60;//60 * 60; // 1 hour (seconds)
 
             // Inform the system that this account supports sync
             ContentResolver.setIsSyncable(account, AUTHORITY, 1);
